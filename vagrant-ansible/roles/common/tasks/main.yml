@@ -1,0 +1,16 @@
+---
+- name: upgrade packages
+  apt: upgrade=dist update_cache=yes
+
+- name: autoremove unused packages
+  shell: apt-get -y autoremove
+  register: autoremove_output
+  changed_when: "'The following packages will be REMOVED' in autoremove_output.stdout"
+
+- name: set Japanese timezone
+  replace: dest=/etc/timezone regexp='Etc/UTC' replace='Asia/Tokyo'
+  register: timezone_modified
+
+- name: reconfigure tzdata
+  shell: dpkg-reconfigure --frontend noninteractive tzdata
+  when: timezone_modified|changed

@@ -1,0 +1,67 @@
+---
+- name: install git for cloning rbenv repository
+  apt: name={{ item }} state=latest
+  with_items:
+    - git-core
+
+- name: check if the user who will run rbenv exists to avoid override it in next step
+  shell: "grep -q {{ rbenv_user}} /etc/passwd"
+  register: user_exists
+  changed_when: False
+  ignore_errors: True
+
+- name: add the user who will run rbenv if it does not exist
+  user: name={{ rbenv_user }} home={{ rbenv_home }} comment="rbenv user"
+  when: user_exists|failed
+
+- name: clone rbenv from github
+  sudo_user: "{{ rbenv_user }}"
+  git: "repo=git://github.com/sstephenson/rbenv.git dest=~/.rbenv accept_hostkey=yes"
+
+- name: add rbenv path to .profile
+  sudo_user: "{{ rbenv_user }}"
+  lineinfile: dest=~/.profile line='export PATH="$HOME/.rbenv/bin:$PATH"'
+
+- name: add eval rbenv init to .profile
+  sudo_user: "{{ rbenv_user }}"
+  lineinfile: dest=~/.profile line='eval "$(rbenv init -)"'
+
+- name: clone ruby-build from github
+  sudo_user: "{{ rbenv_user }}"
+  git: "repo=git://github.com/sstephenson/ruby-build.git dest=~/.rbenv/plugins/ruby-build accept_hostkey=yes"
+
+- name: check if specific version of ruby is already installed
+  shell: "sudo -iu {{ rbenv_user }} rbenv versions | grep -q {{ ruby_version }}"
+  register: ruby_installed
+  changed_when: False
+  ignore_errors: True
+
+- name: "install dev packages for rbenv based on https://github.com/rbenv/ruby-build/wiki"
+  apt: name={{ item }} state=latest
+  with_items:
+    - autoconf
+    - bison
+    - build-essential
+    - libssl-dev
+    - libyaml-dev
+    - libreadline-dev
+    - zlib1g-dev
+    - libncurses-dev
+    - libffi-dev
+    - libgdbm3
+    - libgdbm-dev
+  when: ruby_installed|failed
+
+- name: install ruby
+  shell: "sudo -iu {{ rbenv_user }} rbenv install {{ ruby_version }}"
+  when: ruby_installed|failed
+
+- name: check current global ruby version
+  shell: "sudo -iu {{ rbenv_user }} rbenv version | grep -q {{ ruby_version }}"
+  register: ruby_selected
+  changed_when: False
+  ignore_errors: True
+
+- name: set global ruby version
+  shell: "sudo -iu {{ rbenv_user }} rbenv global {{ ruby_version }}"
+  when: ruby_selected|failed

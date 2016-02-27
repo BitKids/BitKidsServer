@@ -1,0 +1,38 @@
+---
+- name: fetch MySQL official repository apt
+  get_url: "url=http://dev.mysql.com/get/{{ mysql_apt }} dest=/tmp/{{ mysql_apt }}"
+
+- name: debconf mysql-apt-config
+  debconf: name=mysql-apt-config question=mysql-apt-config/{{ item.key }} value={{ item.value }} vtype={{ item.vtype }}
+  with_items:
+    - { key: "repo-distro", value: "ubuntu", vtype: "string" }
+    - { key: "repo-codename", value: "trusty", vtype: "string" }
+    - { key: "select-server", value: "mysql-5.7", vtype: "string" }
+    - { key: "select-product", value: "Apply", vtype: "string" }
+
+- name: install MySQL official repository apt
+  apt: deb=/tmp/{{ mysql_apt }}
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: install MySQL and client development library
+  apt: name={{ item }} state=latest update_cache=yes
+  with_items:
+    - mysql-server
+    - libmysqlclient-dev
+
+- name: install python-mysqldb for configuring MySQL via Ansible
+  apt: name=python-mysqldb state=latest
+
+- name: start and enable MySQL service
+  service: name=mysql state=started enabled=yes
+
+- name: remove rbenv user from MySQL as workaround for issue between MySQL 5.7 and Ansible 1.9
+  mysql_user: name={{ rbenv_user }} state=absent
+
+- name: add rbenv user to MySQL w/o password
+  mysql_user: name={{ rbenv_user }} password="" priv="*.*:ALL,GRANT" state=present
+
+- name: copy MySQL custom configuration
+  template: src=roles/mysql/templates/custom.cnf.j2 dest=/etc/mysql/conf.d/custom.cnf
+  notify: restart mysql

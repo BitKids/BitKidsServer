@@ -1,0 +1,14 @@
+---
+- name: build bitkids development environment
+  hosts: bitkids_dev
+  connection: local
+  sudo: yes
+  roles:
+    - common
+    - ruby
+    - nodejs
+    - rails
+    - mysql
+    - redis
+    - nginx
+    - app
