@@ -1,0 +1,14 @@
+---
+- name: install curl
+  apt: name=curl state=latest
+
+- name: check if Node.js source.list exists
+  stat: path=/etc/apt/sources.list.d/nodesource.list
+  register: node_source
+
+- name: prepare Node.js repository
+  shell: curl -sL https://deb.nodesource.com/setup_4.x | bash -
+  when: node_source.stat.isreg is not defined
+
+- name: install Node.js
+  apt: name=nodejs state=latest update_cache=yes

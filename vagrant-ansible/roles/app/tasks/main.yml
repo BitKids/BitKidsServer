@@ -1,0 +1,9 @@
+---
+- name: "install Puma's Upstart service scripts"
+  template: src=roles/app/templates/{{ item }}.j2 dest=/etc/init/{{ item }}
+  with_items:
+    - puma.conf
+    - puma-manager.conf
+
+- name: copy Puma configuration for starting applications
+  template: src=roles/app/templates/etc-puma.conf.j2 dest=/etc/puma.conf
