@@ -89,4 +89,6 @@ Vagrant.configure(2) do |config|
       ansible.install = false
     end
   end
+
+  config.vm.synced_folder "bitkidsserver", "/home/vagrant/bitkidsserver", type: "nfs"
 end
