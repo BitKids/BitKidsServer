@@ -90,5 +90,5 @@ Vagrant.configure(2) do |config|
     end
   end
 
-  config.vm.synced_folder "bitkidsserver", "/home/vagrant/bitkidsserver", type: "nfs"
+  config.vm.synced_folder "bitkidsserver", "/home/vagrant/bitkidsserver"
 end
