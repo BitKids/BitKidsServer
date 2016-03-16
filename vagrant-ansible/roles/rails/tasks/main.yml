@@ -1,6 +1,6 @@
 ---
 - name: install bundler
-  sudo_user: "{{ rbenv_user }}"
+  become_user: "{{ rbenv_user }}"
   gem: name=bundler state=present executable=~/.rbenv/shims/gem user_install=no
 
 - name: install packages on which rails depends
@@ -10,5 +10,5 @@
     - sqlite3
 
 - name: install rails
-  sudo_user: "{{ rbenv_user }}"
+  become_user: "{{ rbenv_user }}"
   gem: name=rails version={{ rails_version }} state=present executable=~/.rbenv/shims/gem user_install=no
