@@ -1,5 +1,5 @@
 upstream app {
-    server unix:{{ rbenv_home }}/{{ bitkids_app_appname }}/tmp/sockets/puma.sock fail_timeout=0;
+    server unix:/tmp/sockets/bitkidsserver-puma.sock fail_timeout=0;
 }
 
 server {
