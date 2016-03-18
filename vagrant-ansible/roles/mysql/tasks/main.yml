@@ -27,11 +27,8 @@
 - name: start and enable MySQL service
   service: name=mysql state=started enabled=yes
 
-- name: remove rbenv user from MySQL as workaround for issue between MySQL 5.7 and Ansible 1.9
-  mysql_user: name={{ rbenv_user }} state=absent
-
-- name: add rbenv user to MySQL w/o password
-  mysql_user: name={{ rbenv_user }} password="" priv="*.*:ALL,GRANT" state=present
+- name: add rbenv user to MySQL
+  mysql_user: name={{ rbenv_user }} password={{ rbenv_user_mysql_password }} priv="*.*:ALL,GRANT" state=present
 
 - name: copy MySQL custom configuration
   template: src=roles/mysql/templates/custom.cnf.j2 dest=/etc/mysql/conf.d/custom.cnf

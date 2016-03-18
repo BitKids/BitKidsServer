@@ -10,12 +10,12 @@
 
 2. リポジトリを clone します
 
-       git clone https://github.com/BitKids/BitKidsServer
+        git clone https://github.com/BitKids/BitKidsServer
 
 3. clone してできたディレクトリに移動します
 
-       cd BitKidsServer
+        cd BitKidsServer
 
 4. 下記のコマンドを実行して、開発用仮想環境を作成します
 
-       vagrant up
+        vagrant up

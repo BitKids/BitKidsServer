@@ -2,7 +2,7 @@
 - name: build bitkids development environment
   hosts: bitkids_dev
   connection: local
-  sudo: yes
+  become: yes
   roles:
     - common
     - ruby

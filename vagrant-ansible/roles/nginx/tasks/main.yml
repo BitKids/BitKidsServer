@@ -12,5 +12,5 @@
   service: name=nginx state=started enabled=yes
 
 - name: copy nginx custom configuration
-  template: src=roles/nginx/templates/default.conf.j2 dest=/etc/nginx/conf.d/default.conf backup
+  template: src=roles/nginx/templates/default.conf.j2 dest=/etc/nginx/conf.d/default.conf backup=yes
   notify: reload nginx

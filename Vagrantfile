@@ -1,6 +1,34 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# load monkey patched plugin in a way described at
+# http://www.ryuzee.com/contents/blog/6657
+#
+# This should be removed after releasing Vagrant 1.8.2
+plugin_load_proc = lambda do |directory|
+  # We only care about directories
+  next false if !directory.directory?
+
+  # If there is a plugin file in the top-level directory, then load
+  # that up.
+  plugin_file = directory.join("plugin.rb")
+  if plugin_file.file?
+    puts "[INFO]loading monkey patch: #{plugin_file}"
+    load(plugin_file)
+    next true
+  end
+end
+
+Vagrant.source_root.join(File.dirname(__FILE__) + "/vagrant-patch/plugins/provisioners/").children(true).each do |directory|
+  # Ignore non-directories
+  next if !directory.directory?
+
+  # Load from this directory, and exit if we successfully loaded a plugin
+  puts directory
+  next if plugin_load_proc.call(directory)
+end
+# end loading monkey patched plugin
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -78,15 +106,9 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
   config.vm.define :bitkids_dev do |bitkids_dev|
-    bitkids_dev.vm.provision :shell, inline: <<-SHELL
-      sudo apt-get update
-      sudo apt-get install -y python-dev python-pip
-      sudo pip install ansible==1.9.4
-    SHELL
     bitkids_dev.vm.provision :ansible_local do |ansible|
       ansible.provisioning_path = "/vagrant/vagrant-ansible"
       ansible.playbook = "bitkids_dev.yml"
-      ansible.install = false
     end
   end
 end

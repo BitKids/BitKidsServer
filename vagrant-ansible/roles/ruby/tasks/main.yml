@@ -15,19 +15,19 @@
   when: user_exists|failed
 
 - name: clone rbenv from github
-  sudo_user: "{{ rbenv_user }}"
+  become_user: "{{ rbenv_user }}"
   git: "repo=git://github.com/sstephenson/rbenv.git dest=~/.rbenv accept_hostkey=yes"
 
 - name: add rbenv path to .profile
-  sudo_user: "{{ rbenv_user }}"
+  become_user: "{{ rbenv_user }}"
   lineinfile: dest=~/.profile line='export PATH="$HOME/.rbenv/bin:$PATH"'
 
 - name: add eval rbenv init to .profile
-  sudo_user: "{{ rbenv_user }}"
+  become_user: "{{ rbenv_user }}"
   lineinfile: dest=~/.profile line='eval "$(rbenv init -)"'
 
 - name: clone ruby-build from github
-  sudo_user: "{{ rbenv_user }}"
+  become_user: "{{ rbenv_user }}"
   git: "repo=git://github.com/sstephenson/ruby-build.git dest=~/.rbenv/plugins/ruby-build accept_hostkey=yes"
 
 - name: check if specific version of ruby is already installed
