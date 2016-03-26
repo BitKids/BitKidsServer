@@ -1,5 +1,9 @@
 # BitKidsServer
 
+## BitKidsについて
+
+[bitkids.github.io](http://bitkids.github.io/)
+
 ## 開発者向け情報
 
 ### 開発環境の準備
