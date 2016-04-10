@@ -1,0 +1,650 @@
+---
+swagger: "2.0"
+info:
+  version: "0.1.0"
+  title: "BitKidsServer"
+host: "api.bitkids.jp"
+schemes:
+- "https"
+paths:
+  /questions:
+    get:
+      summary: "質問一覧を取得する"
+      description: "ページを指定して質問一覧を取得する。質問の回答状態を指定できる。"
+      operationId: "questionsGET"
+      parameters:
+      - name: "page"
+        in: "query"
+        description: "ページ番号"
+        required: false
+        type: "integer"
+      - name: "status"
+        in: "query"
+        description: "質問の回答状態 all, unanswered, answered, solved"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "array"
+            title: "Question List"
+            items:
+              $ref: "#/definitions/Question"
+          headers:
+            Link:
+              type: "string"
+              description: "前・次・最初・最後へのリンク"
+            X-Object-Count:
+              type: "integer"
+              description: "ページに含まれる質問数"
+      x-swagger-router-controller: "Default"
+    post:
+      summary: "質問を作成する"
+      description: "質問を作成する。Studentのみ作成が可能。"
+      operationId: "questionsPOST"
+      parameters:
+      - in: "body"
+        name: "question"
+        required: false
+        schema:
+          $ref: "#/definitions/question"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Question"
+      x-swagger-router-controller: "Default"
+  /questions/{id}:
+    get:
+      summary: "質問を取得する"
+      description: "idに対応する質問を取得する。"
+      operationId: "questionsIdGET"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Question"
+      x-swagger-router-controller: "Default"
+    delete:
+      summary: "質問を削除する"
+      description: "idに対応する質問を削除する。"
+      operationId: "questionsIdDELETE"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      responses:
+        200:
+          description: "OK"
+      x-swagger-router-controller: "Default"
+    patch:
+      summary: "質問を更新する"
+      description: "idに対応する質問を更新する。"
+      operationId: "questionsIdPATCH"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - in: "body"
+        name: "question"
+        required: true
+        schema:
+          $ref: "#/definitions/QuestionInformation"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Question"
+      x-swagger-router-controller: "Default"
+  /questions/{id}/answers:
+    get:
+      summary: "質問に対する回答一覧を取得する"
+      description: "質問に対する回答一覧を取得する"
+      operationId: "questionsIdAnswersGET"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "array"
+            title: "Answer List"
+            items:
+              $ref: "#/definitions/Answer"
+          headers:
+            Link:
+              type: "string"
+              description: "前・次・最初・最後へのリンク"
+            X-Object-Count:
+              type: "integer"
+              description: "ページに含まれる回答数"
+      x-swagger-router-controller: "Default"
+    post:
+      summary: "回答を作成する"
+      description: "回答を作成する。Teacherのみ作成が可能。"
+      operationId: "questionsIdAnswersPOST"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - in: "body"
+        name: "answer"
+        required: false
+        schema:
+          $ref: "#/definitions/answer"
+      responses:
+        201:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Answer"
+      x-swagger-router-controller: "Default"
+  /questions/{question_id}/answers/{answer_id}:
+    get:
+      summary: "回答を取得する"
+      description: "指定したidの回答を取得する。"
+      operationId: "questionsQuestion_idAnswersAnswer_idGET"
+      parameters:
+      - name: "question_id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - name: "answer_id"
+        in: "path"
+        description: "回答ID"
+        required: true
+        type: "number"
+        format: "int64"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Answer"
+      x-swagger-router-controller: "Default"
+    delete:
+      summary: "回答を削除する"
+      description: "指定したidの回答を削除する。"
+      operationId: "questionsQuestion_idAnswersAnswer_idDELETE"
+      parameters:
+      - name: "question_id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - name: "answer_id"
+        in: "path"
+        description: "回答ID"
+        required: true
+        type: "number"
+        format: "int64"
+      responses:
+        200:
+          description: "OK"
+      x-swagger-router-controller: "Default"
+    patch:
+      summary: "回答を修正する"
+      description: "指定したidの回答を修正する。"
+      operationId: "questionsQuestion_idAnswersAnswer_idPATCH"
+      parameters:
+      - name: "question_id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - name: "answer_id"
+        in: "path"
+        description: "回答ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - in: "body"
+        name: "answer"
+        required: true
+        schema:
+          $ref: "#/definitions/AnswerInformation"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Answer"
+      x-swagger-router-controller: "Default"
+  /questions/{question_id}/answers/{answer_id}/comments:
+    get:
+      summary: "コメント一覧を取得する"
+      description: "コメント一覧を取得する。"
+      operationId: "questionsQuestion_idAnswersAnswer_idCommentsGET"
+      parameters:
+      - name: "question_id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - name: "answer_id"
+        in: "path"
+        description: "回答ID"
+        required: true
+        type: "number"
+        format: "int64"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "array"
+            title: "Question List"
+            items:
+              $ref: "#/definitions/Comment"
+          headers:
+            Link:
+              type: "string"
+              description: "前・次・最初・最後へのリンク"
+            X-Object-Count:
+              type: "integer"
+              description: "ページに含まれるコメント数"
+      x-swagger-router-controller: "Default"
+    post:
+      summary: "コメントを作成する"
+      description: "コメントを作成する。"
+      operationId: "questionsQuestion_idAnswersAnswer_idCommentsPOST"
+      parameters:
+      - name: "question_id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - name: "answer_id"
+        in: "path"
+        description: "回答ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - in: "body"
+        name: "comment"
+        description: "コメント内容"
+        required: true
+        schema:
+          $ref: "#/definitions/CommentInformation"
+      responses:
+        201:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Comment"
+      x-swagger-router-controller: "Default"
+  /questions/{question_id}/answers/{answer_id}/comments/{comment_id}:
+    get:
+      summary: "コメントを取得する"
+      description: "idに対応するコメントを取得する。"
+      operationId: "questionsQuestion_idAnswersAnswer_idCommentsComment_idGET"
+      parameters:
+      - name: "question_id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - name: "answer_id"
+        in: "path"
+        description: "回答ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - name: "comment_id"
+        in: "path"
+        description: "コメントID"
+        required: true
+        type: "number"
+        format: "int64"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Comment"
+      x-swagger-router-controller: "Default"
+    delete:
+      summary: "コメントを削除する"
+      description: "指定したidのコメントを削除する。"
+      operationId: "questionsQuestion_idAnswersAnswer_idCommentsComment_idDELETE"
+      parameters:
+      - name: "question_id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - name: "answer_id"
+        in: "path"
+        description: "回答ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - name: "comment_id"
+        in: "path"
+        description: "コメントID"
+        required: true
+        type: "number"
+        format: "int64"
+      responses:
+        200:
+          description: "OK"
+      x-swagger-router-controller: "Default"
+    patch:
+      summary: "コメントを修正する"
+      description: "指定したidのコメントを修正する。"
+      operationId: "questionsQuestion_idAnswersAnswer_idCommentsComment_idPATCH"
+      parameters:
+      - name: "question_id"
+        in: "path"
+        description: "質問ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - name: "answer_id"
+        in: "path"
+        description: "回答ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - name: "comment_id"
+        in: "path"
+        description: "コメントID"
+        required: true
+        type: "number"
+        format: "int64"
+      - in: "body"
+        name: "comment"
+        required: true
+        schema:
+          $ref: "#/definitions/CommentInformation"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Comment"
+      x-swagger-router-controller: "Default"
+  /students:
+    post:
+      summary: "生徒を作成する"
+      description: "生徒を作成して生徒PATHと生徒情報を返す。\nosはwindows/mac/android/ios等\n"
+      operationId: "studentsPOST"
+      parameters:
+      - in: "body"
+        name: "Student"
+        required: true
+        schema:
+          $ref: "#/definitions/StudentInformation"
+      responses:
+        201:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Student"
+          headers:
+            Location:
+              type: "string"
+              description: "作成した生徒に対応するパス ex. /students/1"
+      x-swagger-router-controller: "Default"
+  /students/{id}:
+    get:
+      summary: "生徒を取得する"
+      description: "指定されたIDの生徒を返す\n"
+      operationId: "studentsIdGET"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "生徒ID"
+        required: true
+        type: "number"
+        format: "int64"
+      responses:
+        200:
+          description: "Student response"
+          schema:
+            $ref: "#/definitions/Student"
+      x-swagger-router-controller: "Default"
+  /teachers:
+    post:
+      summary: "先生を作成する"
+      description: "先生を作成して先生PATHと先生情報を返す。"
+      operationId: "teachersPOST"
+      parameters:
+      - in: "body"
+        name: "Teacher"
+        required: true
+        schema:
+          $ref: "#/definitions/FacebookAuthInformation"
+      responses:
+        201:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Teacher"
+          headers:
+            Location:
+              type: "string"
+              description: "作成した先生に対応するパス ex. /teachers/1"
+      x-swagger-router-controller: "Default"
+  /teachers/{id}:
+    get:
+      summary: "先生を取得する"
+      description: "指定されたIDの先生を返す"
+      operationId: "teachersIdGET"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "先生ID"
+        required: true
+        type: "number"
+        format: "int64"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Teacher"
+      x-swagger-router-controller: "Default"
+    delete:
+      summary: "先生を削除する"
+      description: "先生を削除する"
+      operationId: "teachersIdDELETE"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "先生ID"
+        required: true
+        type: "number"
+        format: "int64"
+      responses:
+        200:
+          description: "OK"
+      x-swagger-router-controller: "Default"
+    patch:
+      summary: "先生の情報（ハンドル名）を更新する"
+      description: "先生の情報（ハンドル名）を更新する"
+      operationId: "teachersIdPATCH"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "先生ID"
+        required: true
+        type: "number"
+        format: "int64"
+      - in: "body"
+        name: "Teacher"
+        required: true
+        schema:
+          $ref: "#/definitions/TeacherInformation"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Teacher"
+      x-swagger-router-controller: "Default"
+definitions:
+  StudentInformation:
+    type: "object"
+    properties:
+      os:
+        type: "string"
+      device_id:
+        type: "string"
+  Student:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      handle:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "date-time"
+      email_id:
+        type: "integer"
+        format: "int64"
+      account_id:
+        type: "integer"
+        format: "int64"
+  FacebookAuthInformation:
+    type: "object"
+    properties:
+      facebook_id:
+        type: "string"
+      facebook_access_token:
+        type: "string"
+      facebook_refresh_token:
+        type: "string"
+  TeacherInformation:
+    type: "object"
+    properties:
+      handle:
+        type: "string"
+  Teacher:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      handle:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "date-time"
+      account_id:
+        type: "integer"
+        format: "int64"
+  Question:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      title:
+        type: "string"
+      content:
+        type: "string"
+      student:
+        $ref: "#/definitions/Student"
+  QuestionInformation:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+      content:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "date-time"
+      updated_at:
+        type: "string"
+        format: "date-time"
+  Answer:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      content:
+        type: "string"
+      teacher:
+        $ref: "#/definitions/Teacher"
+      question_id:
+        type: "integer"
+        format: "int64"
+      created_at:
+        type: "string"
+        format: "date-time"
+      updated_at:
+        type: "string"
+        format: "date-time"
+  AnswerInformation:
+    type: "object"
+    properties:
+      content:
+        type: "string"
+  Comment:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      content:
+        type: "string"
+      commenter:
+        type: "string"
+      question_id:
+        type: "integer"
+        format: "int64"
+      answer_id:
+        type: "integer"
+        format: "int64"
+      account_id:
+        type: "integer"
+        format: "int64"
+      created_at:
+        type: "string"
+        format: "date-time"
+      updated_at:
+        type: "string"
+        format: "date-time"
+  CommentInformation:
+    type: "object"
+    properties:
+      content:
+        type: "string"
+  question:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+      content:
+        type: "string"
+    title: "Question"
+  answer:
+    type: "object"
+    properties:
+      content:
+        type: "string"
+    title: "Answer"
