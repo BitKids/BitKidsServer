@@ -11,7 +11,16 @@ threads threads_count, threads_count
 #
 port        ENV.fetch("PORT") { 3000 }
 
-bind        "unix:///tmp/sockets/bitkidsserver-puma.sock"
+bind_uri = ENV.fetch("BIND_URI") { "unix:///tmp/sockets/bitkidsserver-puma.sock" }
+bind        bind_uri
+
+if bind_uri.start_with?("unix://")
+  sock_dir = File.dirname(bind_uri.sub(%r|unix://|, ""))
+  if !File.directory?(sock_dir)
+    require 'fileutils'
+    FileUtils.mkdir_p(sock_dir)
+  end
+end
 
 # Specifies the `environment` that Puma will run in.
 #
