@@ -4,7 +4,10 @@
   with_items:
     - git-core
 
-- name: check if the user who will run rbenv exists to avoid override it in next step
+- name: |
+    check if the user who will run rbenv exists to avoid
+    override it in next step
+    this task could fail but it is OK, expected behavior
   shell: "grep -q {{ rbenv_user}} /etc/passwd"
   register: user_exists
   changed_when: False
@@ -30,7 +33,9 @@
   become_user: "{{ rbenv_user }}"
   git: "repo=git://github.com/sstephenson/ruby-build.git dest=~/.rbenv/plugins/ruby-build accept_hostkey=yes"
 
-- name: check if specific version of ruby is already installed
+- name: |
+    check if specific version of ruby is already installed
+    this task could fail but it is OK, expected behavior
   shell: "sudo -iu {{ rbenv_user }} rbenv versions | grep -q {{ ruby_version }}"
   register: ruby_installed
   changed_when: False
@@ -56,7 +61,9 @@
   shell: "sudo -iu {{ rbenv_user }} rbenv install {{ ruby_version }}"
   when: ruby_installed|failed
 
-- name: check current global ruby version
+- name: |
+    check current global ruby version
+    this task could fail but it is OK, expected behavior
   shell: "sudo -iu {{ rbenv_user }} rbenv version | grep -q {{ ruby_version }}"
   register: ruby_selected
   changed_when: False

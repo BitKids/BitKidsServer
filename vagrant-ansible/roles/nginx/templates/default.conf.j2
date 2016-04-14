@@ -1,9 +1,5 @@
-upstream api {
-    server unix:{{ rbenv_home }}/{{ bitkids_api_appname }}/tmp/sockets/puma.sock fail_timeout=0;
-}
-
-upstream ws {
-    server unix:{{ rbenv_home }}/{{ bitkids_ws_appname }}/tmp/sockets/puma.sock fail_timeout=0;
+upstream app {
+    server unix:/tmp/sockets/bitkidsserver-puma.sock fail_timeout=0;
 }
 
 server {
@@ -13,26 +9,21 @@ server {
     #charset koi8-r;
     #access_log  /var/log/nginx/log/host.access.log  main;
 
-    location /api/ {
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Host $http_host;
-        #proxy_redirect   off;
-        proxy_pass       http://api/;
-    }
-
     location /ws/ {
         proxy_set_header   Upgrade $http_upgrade;
         proxy_set_header   Connection "upgrade";
         proxy_http_version 1.1;
         #proxy_redirect     off;
-        proxy_pass         http://ws/;
+        proxy_pass         http://app/ws/;
     }
 
     location / {
-        root   /usr/share/nginx/html;
-        index  index.html index.htm;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        #proxy_redirect   off;
+        proxy_pass       http://app/;
     }
 
     #error_page  404              /404.html;

@@ -7,3 +7,6 @@
 
 - name: copy Puma configuration for starting applications
   template: src=roles/app/templates/etc-puma.conf.j2 dest=/etc/puma.conf
+
+- name: create puma socket directory
+  file: path=/tmp/sockets state=directory
