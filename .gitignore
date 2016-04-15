@@ -118,4 +118,5 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-
+# Node.js dependency directories
+node_modules

@@ -113,4 +113,5 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.synced_folder "bitkidsserver", "/home/vagrant/bitkidsserver"
+  config.vm.synced_folder "swagger-server", "/home/vagrant/swagger-server"
 end
