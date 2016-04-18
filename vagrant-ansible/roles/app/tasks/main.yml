@@ -9,4 +9,5 @@
   template: src=roles/app/templates/etc-puma.conf.j2 dest=/etc/puma.conf
 
 - name: create puma socket directory
+  become_user: "{{ rbenv_user }}"
   file: path=/tmp/sockets state=directory
