@@ -8,14 +8,14 @@ module BitKidsApi
       @student = bit_kids_api_students(:one)
     end
 
-    test "should get index" do
-      get students_url
-      assert_response :success
-    end
+    # test "should get index" do
+    #   get students_url
+    #   assert_response :success
+    # end
 
     test "should create student" do
       assert_difference('Student.count') do
-        post students_url, params: { student: { account_id: @student.account_id, device_id: @student.device_id, email_id: @student.email_id, handle: @student.handle, os: @student.os } }
+        post students_url, params: { student: { device_id: @student.device_id, os: @student.os } }
       end
 
       assert_response 201
