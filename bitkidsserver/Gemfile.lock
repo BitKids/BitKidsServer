@@ -1,3 +1,9 @@
+PATH
+  remote: bit_kids_api
+  specs:
+    bit_kids_api (0.1.0)
+      rails (>= 5.0.0.beta3, < 5.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -158,6 +164,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bit_kids_api!
   byebug
   coffee-rails (~> 4.1.0)
   foreman
