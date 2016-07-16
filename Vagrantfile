@@ -78,15 +78,9 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
   config.vm.define :bitkids_dev do |bitkids_dev|
-    bitkids_dev.vm.provision :shell, inline: <<-SHELL
-      sudo apt-get update
-      sudo apt-get install -y python-dev python-pip
-      sudo pip install ansible==1.9.4
-    SHELL
     bitkids_dev.vm.provision :ansible_local do |ansible|
       ansible.provisioning_path = "/vagrant/vagrant-ansible"
       ansible.playbook = "bitkids_dev.yml"
-      ansible.install = false
     end
   end
 
